@@ -1,0 +1,21 @@
+<h1>Vista Home</h1>
+
+{{#if error}}
+
+<div>
+    <p>{{error}}</p>
+</div>
+
+{{else}}
+
+<div>
+    <ol>
+        {{#each bicicletas}}
+
+        <li>Nombre: {{nombre}}, Marca: {{this.marca}}, Modelo: {{modelo}}, Precio: ${{precio}}</li>
+
+        {{/each}}
+    </ol>
+</div>
+
+{{/if}}

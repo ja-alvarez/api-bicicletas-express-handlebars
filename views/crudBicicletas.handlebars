@@ -1,0 +1,117 @@
+<header class="py-3">
+    <h1 class="text-center">Vista CRUD Bicicletas</h1>
+
+</header>
+
+<main class="container">
+    <section>
+        <h2 class="text-center">Listado de bicicletas</h2>
+
+        <section>
+            <form action="" id="addBicicletaForm">
+                <div>
+                    Nombre: <input type="text" name="nombre" id="nombre" required>
+                </div>
+                <div>
+                    Marca: <input type="text" name="marca" id="marca" required>
+                </div>
+                <div>
+                    Modelo: <input type="text" name="modelo" id="modelo" required>
+                </div>
+                <div>
+                    Precio: <input type="number" name="precio" id="precio" required>
+                </div>
+                <div>
+                    <button class="btn btn-success my-1">Agregar</button>
+                </div>
+            </form>
+
+        </section>
+
+    </section>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Id:</th>
+                <th scope="col">Nombre:</th>
+                <th scope="col">Marca:</th>
+                <th scope="col">Modelo:</th>
+                <th scope="col">Precio:</th>
+                <th scope="col">Acciones</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {{#each bicicletas}}
+            <tr>
+                <th scope="row">{{id}}</th>
+                <td>{{nombre}}</td>
+                <td>{{marca}}</td>
+                <td>{{modelo}}</td>
+                <td>{{precio}}</td>
+                <td>
+                    <button class="btn btn-danger" onclick="eliminar({{id}})">Eliminar</button>
+                    <button class="btn btn-warning">Editar</button>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</main>
+
+<script>
+    const eliminar = async (id) => {
+        try {
+            let confirmacion = confirm("Está seguro que desea eliminar la bicicleta con id: " + id + "?")
+            if (confirmacion) {
+                let response = await fetch("/api/v1/bicicletas/" + id, {
+                    method: "DELETE"
+                })
+                let data = await response.json();
+                if (response.status == 200) {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert(data.message)
+                }
+            }
+        } catch (error) {
+            alert("Error al intentar eliminar la bicicleta.")
+        }
+    }
+
+    let addBicicletaForm = document.getElementById("addBicicletaForm");
+    addBicicletaForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        try {
+            const myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+
+            const raw = JSON.stringify({
+                "nombre": nombre.value,
+                "marca": marca.value,
+                "modelo": modelo.value,
+                "precio": Number(precio.value)
+            });
+
+            const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow"
+            };
+            let response = await fetch("/api/v1/bicicletas", requestOptions);
+            let data = await response.json();
+            if (response.status == 201) {
+                alert(data.message)
+                location.reload();
+            } else {
+                alert("Ha ocurrido un error al intentar registrar la bicicleta.")
+            }
+        } catch (error) {
+            console.log(error)
+            alert("Error al intentar crear la bicicleta.");
+        }
+    })
+</script>
